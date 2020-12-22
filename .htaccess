@@ -1,0 +1,11 @@
+############ Povoleni uprav URL ############
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteRule ^/?novyPrispevek/([^/d]+)/?$ index.php?page=novyPrispevek&id=$1
+RewriteRule ^([^.]+)$ /index.php?page=$1
+#RewriteRule ^([^.]+)$ /index.php?page=novyPrispevek?id=$2
+
+############ Vlastni chybove stranky ############
+ErrorDocument 403 /error
+ErrorDocument 404 /error
