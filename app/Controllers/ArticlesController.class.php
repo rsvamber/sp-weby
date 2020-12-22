@@ -85,12 +85,12 @@ class ArticlesController implements IController
         return $obsah;
         }
 
-        /**
-         * Prida recenzenty do databaze.
-         * @return int vysledek, 1 - uspech, 2 - duplicitni recenzenti, 3 - nedostatek recenzentu
-         */
-        private function addReviewers(): int
-        {
+    /**
+     * Prida recenzenty do databaze.
+     * @return int vysledek, 1 - uspech, 2 - duplicitni recenzenti, 3 - nedostatek recenzentu
+     */
+    private function addReviewers(): int
+    {
             if (isset($_POST['selectReviewer0']) && isset($_POST['selectReviewer1']) && isset($_POST['selectReviewer2'])) {
 
                 $selectedReviewers = array($_POST['selectReviewer0'], $_POST['selectReviewer1'], $_POST['selectReviewer2']);
@@ -107,84 +107,84 @@ class ArticlesController implements IController
                 return 3;
             }
         }
-        /**
-         * Odstrani clanek z databaze.
-         * @return bool uspech smazani
-         */
-        private function deleteArticle(string $fileDir): bool
-        {
-            $filename = $this->db->getArticle($_POST['deleteArticleId'])['filename'];
-            if ($filename != "") {
-                $path = $fileDir . "//" . $filename;
-                    if (file_exists($path)) {
-                        unlink($path);
-                    }
-            }
-        return $this->db->deleteArticle($_POST['deleteArticleId']);
-        }
-
-        /**
-         * Ohodnoti clanek uzivatelem
-         * @return bool uspech ohodnoceni
-         */
-        private function upvoteArticleByUser(): bool
-        {
-            $flag = isset($_POST['upvoteArticleAction']) ? true : false;
-            if(isset($_POST['updateExistingVote'])){
-                $res = $this->db->updateVoteByUser($_POST['voteArticleId'], $_POST['voteUserId'], $flag);
-            }
-            else {
-                $res = $this->db->voteArticleByUser($_POST['voteArticleId'], $_POST['voteUserId'], $flag);
-            }
-            $res2 = $this->db->changeArticleScore($_POST['voteArticleId'], $this->db->getArticle($_POST['voteArticleId'])['score'], $flag);
-            if ($this->db->getArticle($_POST['voteArticleId'])['score'] >= 3) {
-                $this->db->authorizeArticle($_POST['voteArticleId']);
-            }
-            return ($res && $res2);
-        }
-        /**
-         * Nacte vsechny clanky z databaze (vcetne nepublikovanych).
-         * @return array data clanku
-         */
-        private function loadAllArticles(): array
-        {
-            $res = $this->db->getAllArticles();
-            for ($i = 0; $i < count($res); $i++) {
-                $res[$i]['jmeno'] = $this->db->getUserById($res[$i]['autor_id'])['jmeno'];
-                $res[$i]['hodnoceno'] = $this->db->getUpvoteStatus($res[$i]['id']);
-                if($this->db->isUserLogged()){
-                    $res[$i]['positive'] = $this->db->getTypeOfRating($_SESSION['current_user_id'], $res[$i]['id']);
+    /**
+     * Odstrani clanek z databaze.
+     * @return bool uspech smazani
+     */
+    private function deleteArticle(string $fileDir): bool
+    {
+        $filename = $this->db->getArticle($_POST['deleteArticleId'])['filename'];
+        if ($filename != "") {
+            $path = $fileDir . "//" . $filename;
+                if (file_exists($path)) {
+                    unlink($path);
                 }
-                $res[$i]['reviewers'] = $this->db->getReviewers($res[$i]['id']);
-                $res[$i]['priloha'] = $this->db->getArticle($res[$i]['id'])['filename'];
-            }
-            return $res;
         }
-        /**
-         * Nacte publikovane clanky z databaze (bez nepublikovanych).
-         * @return array data clanku
-         */
-        private function loadAuthorizedArticles(): array
-        {
-            $res = $this->db->getAuthorizedArticles();
-            if($this->db->isUserLogged()){
-                $res2 = $this->db->getArticlesByAuthor($_SESSION['current_user_id']);
-                foreach($res2 as $a){
-                    if(!in_array($a, $res)){
-                        $res[] = $a;
-                    }
-                }
-            }
-            
-            for ($i = 0; $i < count($res); $i++) {
-                $res[$i]['jmeno'] = $this->db->getUserById($res[$i]['autor_id'])['jmeno'];
-                $res[$i]['hodnoceno'] = $this->db->getUpvoteStatus($res[$i]['id']);
-                $res[$i]['reviewers'] = $this->db->getReviewers($res[$i]['id']);
-                $res[$i]['priloha'] = $this->db->getArticle($res[$i]['id'])['filename'];
-            }
-            return $res;
-        }
+    return $this->db->deleteArticle($_POST['deleteArticleId']);
     }
+
+    /**
+     * Ohodnoti clanek uzivatelem
+     * @return bool uspech ohodnoceni
+     */
+    private function upvoteArticleByUser(): bool
+    {
+        $flag = isset($_POST['upvoteArticleAction']) ? true : false;
+        if(isset($_POST['updateExistingVote'])){
+            $res = $this->db->updateVoteByUser($_POST['voteArticleId'], $_POST['voteUserId'], $flag);
+        }
+        else {
+            $res = $this->db->voteArticleByUser($_POST['voteArticleId'], $_POST['voteUserId'], $flag);
+        }
+        $res2 = $this->db->changeArticleScore($_POST['voteArticleId'], $this->db->getArticle($_POST['voteArticleId'])['score'], $flag);
+        if ($this->db->getArticle($_POST['voteArticleId'])['score'] >= 3) {
+            $this->db->authorizeArticle($_POST['voteArticleId']);
+        }
+        return ($res && $res2);
+    }
+    /**
+     * Nacte vsechny clanky z databaze (vcetne nepublikovanych).
+     * @return array data clanku
+     */
+    private function loadAllArticles(): array
+    {
+        $res = $this->db->getAllArticles();
+        for ($i = 0; $i < count($res); $i++) {
+            $res[$i]['jmeno'] = $this->db->getUserById($res[$i]['autor_id'])['jmeno'];
+            $res[$i]['hodnoceno'] = $this->db->getUpvoteStatus($res[$i]['id']);
+            if($this->db->isUserLogged()){
+                $res[$i]['positive'] = $this->db->getTypeOfRating($_SESSION['current_user_id'], $res[$i]['id']);
+            }
+            $res[$i]['reviewers'] = $this->db->getReviewers($res[$i]['id']);
+            $res[$i]['priloha'] = $this->db->getArticle($res[$i]['id'])['filename'];
+        }
+        return $res;
+    }
+    /**
+     * Nacte publikovane clanky z databaze (bez nepublikovanych).
+     * @return array data clanku
+     */
+    private function loadAuthorizedArticles(): array
+    {
+        $res = $this->db->getAuthorizedArticles();
+        if($this->db->isUserLogged()){
+            $res2 = $this->db->getArticlesByAuthor($_SESSION['current_user_id']);
+            foreach($res2 as $a){
+                if(!in_array($a, $res)){
+                    $res[] = $a;
+                }
+            }
+        }
+        
+        for ($i = 0; $i < count($res); $i++) {
+            $res[$i]['jmeno'] = $this->db->getUserById($res[$i]['autor_id'])['jmeno'];
+            $res[$i]['hodnoceno'] = $this->db->getUpvoteStatus($res[$i]['id']);
+            $res[$i]['reviewers'] = $this->db->getReviewers($res[$i]['id']);
+            $res[$i]['priloha'] = $this->db->getArticle($res[$i]['id'])['filename'];
+        }
+        return $res;
+    }
+}
 
 
 ?>

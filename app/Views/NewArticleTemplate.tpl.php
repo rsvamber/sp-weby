@@ -40,6 +40,9 @@ if ($this->db->isUserLogged()) {
                 if (isset($tplData['article'])) {
                         echo "<div class='alert alert-primary'>$tplData[article]</div>"; 
                 }
+                if (isset($tplData['upload'])) {
+                    echo "<div class='alert alert-primary'>$tplData[upload]</div>"; 
+            }
             ?>
             <div class="prihlaseni scene animated fadeInUp">
                 <form action="" method="POST" id="newArticleForm" enctype="multipart/form-data">

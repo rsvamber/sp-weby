@@ -29,6 +29,20 @@ class UserManagementController implements IController {
 
         // nazev
         $tplData['title'] = $pageTitle;
+        if($this->db->isUserLogged()){
+            $pravoId = $this->db->getUserById($_SESSION['current_user_id'])['id_pravo'];
+            echo $pravoId;
+            if($pravoId != 1){
+                echo "<script>alert('Nemáte oprávnění spravovat uživatele');
+            window.location.replace('http://localhost/prispevky');
+            </script>";
+            }
+        }
+        else{
+            echo "<script>alert('Nemáte oprávnění spravovat uživatele');
+            window.location.replace('http://localhost/prispevky');
+            </script>";
+        }
 
         // zajisteni smazani uzivatele
         if(isset($_POST['action']) and $_POST['action'] == "delete"

@@ -15,7 +15,7 @@ class TemplateBasics
 ?>
 
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="cs">
 
     <head>
       <base href="/">

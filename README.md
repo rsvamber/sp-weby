@@ -13,3 +13,4 @@ Toto je repo pro moji semestrální práci z předmětu KIV/WEB na ZČU.
    - CKEditor
    - Bootstrap
    - JQuery
+   - PHP

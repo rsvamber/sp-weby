@@ -18,6 +18,7 @@ class ApplicationStart {
      * Spusteni webove aplikace.
      */
     public function appStart(){
+        
         //// test, zda je v URL pozadavku uvedena dostupna stranka, jinak volba defaultni stranky
         // mam spravnou hodnotu na vstupu nebo nastavim defaultni
         if(isset($_GET["page"]) && array_key_exists($_GET["page"], WEB_PAGES)){

@@ -89,6 +89,8 @@ class NewArticleController implements IController
         if ($imageFileType == "pdf") {
             move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file);
         }
+
+        
     }
 }
 
